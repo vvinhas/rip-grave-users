@@ -1,4 +1,23 @@
 const uuid = require('uuid')
+const faker = require('faker')
+
+const generateFakeUser = () => ({
+  _id: faker.random.uuid(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName()
+})
+
+const init = (fake) => {
+  let data = []
+
+  while (data.length < fake) {
+    data.push(generateFakeUser())
+  }
+
+  return { data }
+}
 
 const make = (router, store) => {
   // Get all users
@@ -23,12 +42,6 @@ const make = (router, store) => {
   })
 
   return router
-}
-
-const init = (fake) => {
-  return {
-    data: []
-  }
 }
 
 module.exports = {
