@@ -1,5 +1,6 @@
 const uuid = require('uuid')
 const faker = require('faker')
+const { Map } = require('immutable')
 
 const generateFakeUser = () => ({
   _id: faker.random.uuid(),
@@ -22,22 +23,18 @@ const init = (fake) => {
 const make = (router, store) => {
   // Get all users
   router.get('/all', (req, res) => {
-    const data = store.getDeep('users', 'data')
-    res.json(data)
+    res.json(store.getState().get('data').toJSON())
   })
   // Save a user
   router.post('/', (req, res) => {
     const { email, name } = req.body
-    const data = store.getDeep('users', 'data')
-    store.setDeep('users', 'data', [
-      ...data,
-      {
+    const newState = store.getState()
+      .update('data', users => users.push(Map({
         _id: uuid.v4(),
         email,
         name
-      }
-    ])
-    
+      })))
+    store.updateState(newState)
     res.status(200).end()
   })
 
